@@ -7,6 +7,7 @@
 [node name="Game" type="Node3D" unique_id=1577901918]
 
 [node name="CharacterBody3D" parent="." unique_id=1195279261 instance=ExtResource("1_u44n3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.326528, 0)
 
 [node name="Control" parent="." unique_id=1289398281 instance=ExtResource("2_sb48q")]
 

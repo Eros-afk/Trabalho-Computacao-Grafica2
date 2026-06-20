@@ -1,3 +1,14 @@
 [gd_scene format=3 uid="uid://vnbi8g0c4hel"]
 
 [node name="Map" type="Node3D" unique_id=1233684254]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=699123025]
+transform = Transform3D(29.64115, 0, 0, 0, 1.0048338, 0, 0, 0, 2.7239408, 0, 0, -1.1295156)
+size = Vector3(1, 1, 10)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1136528271]
+transform = Transform3D(1098.9218, 0, 0, 0, 3.3703961, 0, 0, 0, 9.280515, -10.001588, -2.4135838, 8.101591)
+size = Vector3(0.0042419434, 3.5263672, 0.56676483)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1899881015]
+transform = Transform3D(0.7564436, 0.5855244, -0.29146922, 0, 0.44563144, 0.8952166, 0.65405893, -0.6771809, 0.33709505, 0, 1.9941301, -4.7683716e-07)
