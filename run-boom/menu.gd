@@ -5,6 +5,7 @@ extends Control
 @onready var instrucoes = $Instrucoes
 
 func _ready():
+	add_to_group("hud")
 	var largura = get_viewport().size.x
 	var altura = get_viewport().size.y
 	
