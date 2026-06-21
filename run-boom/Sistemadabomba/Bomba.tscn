@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bvm4wmi0rh716"]
+
+[ext_resource type="Script" uid="uid://c0husa4yyeje6" path="res://Sistemadabomba/bomba.gd" id="1_ft5ed"]
+
+[node name="Bomba" type="Node" unique_id=1229929300]
+script = ExtResource("1_ft5ed")
