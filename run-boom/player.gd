@@ -2,11 +2,13 @@ extends CharacterBody3D
 
 # --- Variáveis de Movimento Padrão ---
 const WALK_SPEED = 5.0
-const RUN_SPEED = 9.0 # Velocidade ao correr
-var base_speed = WALK_SPEED
-var speed_multiplier = 1.0
-var current_speed = WALK_SPEED
+const RUN_SPEED = 10.0 # Velocidade ao correr
 const JUMP_VELOCITY = 6
+
+var base_speed = WALK_SPEED
+var speed_multiplier = 2.0
+var current_speed = WALK_SPEED
+
 
 # --- Variáveis do Dash ---
 const DASH_SPEED = 18.0

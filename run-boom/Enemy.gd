@@ -1,15 +1,24 @@
 extends CharacterBody3D
 
 var speed: float
+const JUMP_VELOCITY = 8.0
+var jump_timer = 0.0
 
 func _ready():
-	speed = randf_range(1.0, 2.0)
+	speed = randf_range(5.0, 6.0)
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
+	else:
+		if is_on_wall() and jump_timer <= 0:
+			velocity.y = JUMP_VELOCITY
+			jump_timer = 1.0
+			
+	if jump_timer > 0:
+		jump_timer -= delta
 
 	var player = get_tree().get_first_node_in_group("player")
 	if player:
