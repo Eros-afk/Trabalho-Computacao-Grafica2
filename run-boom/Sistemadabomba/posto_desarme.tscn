@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://2hfth7gmfff0"]
+
+[ext_resource type="Script" uid="uid://c2hnfmepe6lyl" path="res://Sistemadabomba/posto_desarme.gd" id="1_oiyk5"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ndhlu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lweet"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_uhgaq"]
+
+[node name="PostoDesarme" type="Area3D" unique_id=2147321879]
+script = ExtResource("1_oiyk5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1470971096]
+shape = SubResource("BoxShape3D_ndhlu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=238631752]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49809873, 0)
+material_override = SubResource("StandardMaterial3D_lweet")
+mesh = SubResource("CylinderMesh_uhgaq")
