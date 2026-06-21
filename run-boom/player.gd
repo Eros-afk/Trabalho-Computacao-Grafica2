@@ -6,7 +6,7 @@ const RUN_SPEED = 9.0 # Velocidade ao correr
 var base_speed = WALK_SPEED
 var speed_multiplier = 1.0
 var current_speed = WALK_SPEED
-const JUMP_VELOCITY = 4.5
+const JUMP_VELOCITY = 6
 
 # --- Variáveis do Dash ---
 const DASH_SPEED = 18.0
@@ -45,12 +45,13 @@ func _ready():
 
 func _unhandled_input(event):
 	if event.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		camera_pivot.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		camera_pivot.rotation.x -= event.relative.y * MOUSE_SENSITIVITY
-		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-80), deg_to_rad(60))
 
 func _physics_process(delta):
 	# --- GERENCIAMENTO DE STAMINA ---
