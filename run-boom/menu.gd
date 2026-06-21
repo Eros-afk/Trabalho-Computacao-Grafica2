@@ -35,4 +35,4 @@ func _ready():
 	botao_jogar.pressed.connect(_on_botao_jogar_pressed)
 
 func _on_botao_jogar_pressed():
-	get_tree().change_scene_to_file("res://HUD.tscn")
+	get_tree().change_scene_to_file("res://Map.tscn")

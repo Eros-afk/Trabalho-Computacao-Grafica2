@@ -1,5 +1,10 @@
 [gd_scene format=3 uid="uid://vnbi8g0c4hel"]
 
+[ext_resource type="Script" path="res://EnemySpawner.gd" id="1_spwn"]
+[ext_resource type="PackedScene" path="res://Enemy.tscn" id="2_enm"]
+[ext_resource type="PackedScene" uid="uid://chax4nmmg73xf" path="res://Player.tscn" id="3_plyr"]
+[ext_resource type="PackedScene" uid="uid://bcb4qomlo3jpy" path="res://HUD.tscn" id="4_hud"]
+
 [node name="Map" type="Node3D" unique_id=1233684254]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1899881015]
@@ -50,3 +55,12 @@ size = Vector3(4.284668, 2.852539, 4.652115)
 [node name="Chao" type="CSGBox3D" parent="Blocos" unique_id=1787722802]
 transform = Transform3D(68.05943, 0, 0, 0, 1.0048338, 0, 0, 0, 7.6832833, 0, -1.1004744, -1.1295156)
 size = Vector3(1, 1, 10)
+
+[node name="EnemySpawner" type="Node3D" parent="."]
+script = ExtResource("1_spwn")
+enemy_scene = ExtResource("2_enm")
+
+[node name="Player" parent="." instance=ExtResource("3_plyr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
