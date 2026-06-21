@@ -9,7 +9,7 @@ func _ready():
 	var altura = get_viewport().size.y
 	
 	# Titulo
-	titulo.text = "💣 RunBoom"
+	titulo.text = "	RunBoom"
 	titulo.add_theme_font_size_override("font_size", 72)
 	titulo.add_theme_color_override("font_color", Color.RED)
 	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
