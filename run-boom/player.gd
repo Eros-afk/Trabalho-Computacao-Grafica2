@@ -2,9 +2,13 @@ extends CharacterBody3D
 
 # --- Variáveis de Movimento Padrão ---
 const WALK_SPEED = 5.0
-const RUN_SPEED = 9.0 # Velocidade ao correr
+const RUN_SPEED = 10.0 # Velocidade ao correr
+const JUMP_VELOCITY = 6
+
+var base_speed = WALK_SPEED
+var speed_multiplier = 2.0
 var current_speed = WALK_SPEED
-const JUMP_VELOCITY = 4.5
+
 
 # --- Variáveis do Dash ---
 const DASH_SPEED = 18.0
@@ -35,6 +39,7 @@ var hud = null
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _ready():
+	add_to_group("player")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	hud = get_tree().get_first_node_in_group("hud")
 	if hud:
@@ -42,12 +47,13 @@ func _ready():
 
 func _unhandled_input(event):
 	if event.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		camera_pivot.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		camera_pivot.rotation.x -= event.relative.y * MOUSE_SENSITIVITY
-		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-80), deg_to_rad(60))
 
 func _physics_process(delta):
 	# --- GERENCIAMENTO DE STAMINA ---
@@ -58,7 +64,7 @@ func _physics_process(delta):
 	var is_running = Input.is_action_pressed("run") and is_moving and is_on_floor() and not is_exhausted
 
 	if is_running:
-		current_speed = RUN_SPEED
+		base_speed = RUN_SPEED
 		stamina -= STAMINA_DRAIN * delta
 		regen_timer = REGEN_DELAY # Reseta o tempo de espera para regenerar
 
@@ -66,7 +72,9 @@ func _physics_process(delta):
 			stamina = 0
 			is_exhausted = true # Entra em estado de exaustão
 	else:
-		current_speed = WALK_SPEED
+		base_speed = WALK_SPEED
+		
+	current_speed = base_speed * speed_multiplier
 
 	# Diminui o cronômetro de espera para regenerar
 	if regen_timer > 0:
@@ -135,3 +143,8 @@ func _physics_process(delta):
 			velocity.z = move_toward(velocity.z, 0, current_speed)
 
 	move_and_slide()
+
+func apply_slow(amount: float, duration: float):
+	speed_multiplier = max(0.1, speed_multiplier - amount)
+	await get_tree().create_timer(duration).timeout
+	speed_multiplier = min(1.0, speed_multiplier + amount)

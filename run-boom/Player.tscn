@@ -1,3 +1,31 @@
 [gd_scene format=3 uid="uid://chax4nmmg73xf"]
 
+[ext_resource type="Script" uid="uid://w5fc1438828h" path="res://player.gd" id="1_scr"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_plyr"]
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ylw"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_plyr"]
+material = SubResource("StandardMaterial3D_ylw")
+height = 1.0
+
 [node name="CharacterBody3D" type="CharacterBody3D" unique_id=1195279261]
+script = ExtResource("1_scr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1309070870]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CylinderShape3D_plyr")
+
+[node name="Visual" type="MeshInstance3D" parent="." unique_id=1547314234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("CylinderMesh_plyr")
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=977944113]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=955865222]
+transform = Transform3D(0.99941933, -0.01927413, 0.0280931, 0.006235865, 0.91414905, 0.4053303, -0.033493638, -0.40491956, 0.91373825, 0, 2.79876, 3.5355306)
+current = true
