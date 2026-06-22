@@ -1,10 +1,10 @@
 // ---------- POWER-UPS ----------
 function setupPowerups() {
-  const types = ['energetico','escudo','adrenalina'];
-  for (let i=0; i<7; i++) {
+  const types = ['energetico','escudo'];
+  for (let i=0; i<3; i++) {
     const type = types[Math.floor(Math.random()*types.length)];
-    const z = 38 - i*11 + (Math.random()*4-2);
-    const x = (Math.random()*18-9);
+    const z = 34 - i*24 + (Math.random()*5-2.5);
+    const x = (Math.random()*16-8);
     createPowerup(type, x, z);
   }
 }
@@ -12,7 +12,6 @@ function setupPowerups() {
 function createPowerup(type, x, z) {
   let color = 0xffee00;
   if (type === 'escudo') color = 0x33aaff;
-  if (type === 'adrenalina') color = 0xff33aa;
 
   const mat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.5 });
   const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.5, 0), mat);
@@ -51,8 +50,5 @@ function applyPowerup(type) {
     activePowerups.energetico = 8; // 8s de boost de velocidade
   } else if (type === 'escudo') {
     shieldCount += 1;
-  } else if (type === 'adrenalina') {
-    bombTime = Math.max(0, bombTime - 8); // reduz contador da bomba (risco/recompensa, conforme o txt)
   }
 }
-

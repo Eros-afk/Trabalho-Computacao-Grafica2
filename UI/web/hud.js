@@ -7,8 +7,6 @@ function flashMsg(id) {
 }
 
 function updatePowerupHUD(dt) {
-  const map = { energetico: 'pwEnergetico', escudo: 'pwEscudo', adrenalina: 'pwAdrenalina' };
-
   if (activePowerups.energetico > 0) {
     activePowerups.energetico -= dt;
     if (activePowerups.energetico < 0) activePowerups.energetico = 0;
@@ -20,9 +18,6 @@ function updatePowerupHUD(dt) {
   const sEl = document.getElementById('pwEscudo');
   sEl.classList.toggle('active', shieldCount > 0);
   sEl.querySelector('.timer').textContent = shieldCount > 0 ? 'x'+shieldCount : '';
-
-  const aEl = document.getElementById('pwAdrenalina');
-  aEl.classList.toggle('active', false);
 }
 
 
@@ -52,4 +47,3 @@ function showOverlay(won, sub) {
   subEl.textContent = sub;
   overlay.classList.add('show');
 }
-

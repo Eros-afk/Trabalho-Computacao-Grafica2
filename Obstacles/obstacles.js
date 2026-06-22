@@ -1,19 +1,23 @@
 // ---------- OBSTÁCULOS: Carros abandonados, Caixas, Buracos, Barricadas ----------
 function setupObstacles() {
-  const zStart = 45, zEnd = -45;
-  const obsTypes = ['carro','caixa','buraco','barricada'];
+  const zStart = 48, zEnd = -50;
+  const obsTypes = ['carro','caixa','buraco','barricada','cone','tambor','placaObra','van'];
 
-  for (let z = zStart; z > zEnd; z -= 7) {
-    if (Math.random() < 0.55) {
+  for (let z = zStart; z > zEnd; z -= 6) {
+    if (Math.random() < 0.72) {
       const type = obsTypes[Math.floor(Math.random()*obsTypes.length)];
-      const x = (Math.random()*16 - 8);
+      const x = (Math.random()*17 - 8.5);
       createObstacle(type, x, z);
     }
   }
+
+  // Alguns buracos fixos garantem que o perigo principal apareça em toda partida.
+  [-32, -6, 22].forEach((z, i) => createObstacle('buraco', i % 2 === 0 ? -4.5 : 4.5, z));
 }
 
 function createObstacle(type, x, z) {
   let mesh;
+  let hazardRadius = 0;
   if (type === 'carro') {
     const g = new THREE.Group();
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0xaa3333 });
@@ -32,13 +36,58 @@ function createObstacle(type, x, z) {
     mesh.position.y = 0.6;
     mesh.castShadow = true;
   } else if (type === 'buraco') {
-    const mat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-    mesh = new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.1, 0.3, 16), mat);
-    mesh.position.y = -0.1;
+    const g = new THREE.Group();
+    const holeMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 1 });
+    const rimMat = new THREE.MeshStandardMaterial({ color: 0x5b4a3f, roughness: 0.95 });
+    const hole = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.2, 0.22, 24), holeMat);
+    hole.position.y = -0.08;
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.12, 8, 28), rimMat);
+    rim.rotation.x = Math.PI/2;
+    rim.position.y = 0.04;
+    g.add(hole, rim);
+    mesh = g;
+    hazardRadius = 1.25;
   } else { // barricada
-    const mat = new THREE.MeshStandardMaterial({ color: 0xff8800 });
-    mesh = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1, 0.4), mat);
-    mesh.position.y = 0.5;
+    if (type === 'cone') {
+      const mat = new THREE.MeshStandardMaterial({ color: 0xff6a00, roughness: 0.5 });
+      const g = new THREE.Group();
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.0, 16), mat);
+      cone.position.y = 0.5;
+      const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.035, 6, 16), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+      stripe.rotation.x = Math.PI/2;
+      stripe.position.y = 0.45;
+      g.add(cone, stripe);
+      mesh = g;
+    } else if (type === 'tambor') {
+      const mat = new THREE.MeshStandardMaterial({ color: 0x1f6fb2, metalness: 0.25, roughness: 0.55 });
+      mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 1.25, 18), mat);
+      mesh.position.y = 0.62;
+      mesh.rotation.z = Math.random() < 0.35 ? Math.PI/2 : 0;
+    } else if (type === 'placaObra') {
+      const g = new THREE.Group();
+      const signMat = new THREE.MeshStandardMaterial({ color: 0xffcc22, roughness: 0.45 });
+      const postMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
+      const sign = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.1, 0.12), signMat);
+      sign.position.y = 1.2;
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 8), postMat);
+      post.position.y = 0.55;
+      g.add(sign, post);
+      mesh = g;
+    } else if (type === 'van') {
+      const g = new THREE.Group();
+      const vanMat = new THREE.MeshStandardMaterial({ color: 0xe5e5e5, roughness: 0.65 });
+      const glassMat = new THREE.MeshStandardMaterial({ color: 0x75b8d8, emissive: 0x1d5d7a, emissiveIntensity: 0.25 });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 4.6), vanMat);
+      body.position.y = 0.85;
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.55, 1.2), glassMat);
+      glass.position.set(0, 1.55, -0.7);
+      g.add(body, glass);
+      mesh = g;
+    } else {
+      const mat = new THREE.MeshStandardMaterial({ color: 0xff8800 });
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1, 0.4), mat);
+      mesh.position.y = 0.5;
+    }
     mesh.castShadow = true;
   }
   mesh.position.x = x;
@@ -46,7 +95,7 @@ function createObstacle(type, x, z) {
   scene.add(mesh);
 
   const box = new THREE.Box3().setFromObject(mesh);
-  obstacles.push({ mesh, box, type });
+  obstacles.push({ mesh, box, type, hazardRadius });
 }
 
 
@@ -57,10 +106,22 @@ function checkCollisions() {
     new THREE.Vector3(0.9, 1.8, 0.9)
   );
 
-  // obstáculos: colidir empurra (ricochete). Caixas/barricadas baixas podem ser "vaultadas" quando o player já está no ar.
+  // obstáculos: buraco encerra a partida; objetos baixos podem ser pulados manualmente.
   obstacles.forEach(o => {
-    const isLowObstacle = (o.type === 'caixa' || o.type === 'barricada');
-    if (isLowObstacle && !onGround && player.position.y > 0.9) return; // está passando por cima (vault)
+    if (gameOver) return;
+
+    if (o.type === 'buraco') {
+      const dx = player.position.x - o.mesh.position.x;
+      const dz = player.position.z - o.mesh.position.z;
+      const insideHole = Math.sqrt(dx*dx + dz*dz) < o.hazardRadius;
+      if (insideHole && player.position.y < 0.55) {
+        triggerExplosion('Você caiu em um buraco.');
+      }
+      return;
+    }
+
+    const isLowObstacle = (o.type === 'caixa' || o.type === 'barricada' || o.type === 'cone');
+    if (isLowObstacle && !onGround && player.position.y > 0.9) return;
     o.box.setFromObject(o.mesh);
     if (playerBox.intersectsBox(o.box)) {
       const pushDir = new THREE.Vector3().subVectors(player.position, o.mesh.position);
@@ -106,4 +167,3 @@ function handleNPCHit(npc) {
   pushDir.y = 0; pushDir.normalize();
   player.position.addScaledVector(pushDir, 0.3);
 }
-

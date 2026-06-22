@@ -112,7 +112,7 @@ function setupPlayer() {
 
   playerGroup.userData.torso = torso;
   playerGroup.userData.headRef = head;
-  playerGroup.userData.baseHeight = 0; // usado pro agachamento do slide
+  playerGroup.userData.baseHeight = 0;
 
   playerGroup.position.set(0, 0, 60); // começa "atrás", correndo em -Z até a extração
   scene.add(playerGroup);
@@ -129,7 +129,6 @@ function onKeyDown(e) {
     case 'KeyD': keys.d = true; break;
     case 'ShiftLeft': case 'ShiftRight': keys.shift = true; break;
     case 'Space': keys.space = true; e.preventDefault(); break;
-    case 'ControlLeft': case 'ControlRight': case 'KeyC': keys.slide = true; break;
   }
 }
 function onKeyUp(e) {
@@ -140,7 +139,6 @@ function onKeyUp(e) {
     case 'KeyD': keys.d = false; break;
     case 'ShiftLeft': case 'ShiftRight': keys.shift = false; break;
     case 'Space': keys.space = false; break;
-    case 'ControlLeft': case 'ControlRight': case 'KeyC': keys.slide = false; break;
   }
 }
 
@@ -149,23 +147,6 @@ function getSpeedMultiplier() {
   let mult = 1;
   if (activePowerups.energetico > 0) mult *= 1.6;
   return mult;
-}
-
-// detecta obstáculo baixo (caixa/barricada) diretamente na frente, dentro do alcance, pra vault automático
-function checkVaultAhead(dirVec) {
-  const probePos = player.position.clone().addScaledVector(dirVec, CONFIG.vaultDetectRange);
-  probePos.y = 0.5;
-  for (const o of obstacles) {
-    if (o.type !== 'caixa' && o.type !== 'barricada') continue;
-    const dx = Math.abs(probePos.x - o.mesh.position.x);
-    const dz = Math.abs(probePos.z - o.mesh.position.z);
-    if (dx < 1.1 && dz < 1.1) return o;
-  }
-  return null;
-}
-
-function triggerVaultPose() {
-  // gancho reservado para futuros efeitos de pose; pose já é tratada via onGround=false
 }
 
 function updatePlayer(dt) {
@@ -177,8 +158,7 @@ function updatePlayer(dt) {
   if (keys.d) moveX += 1;
 
   const movingInput = (moveX !== 0 || moveZ !== 0);
-  const isSliding = slideTimer > 0;
-  const speedMult = getSpeedMultiplier() * (isSliding ? 1.5 : 1);
+  const speedMult = getSpeedMultiplier();
   const baseSpeed = (keys.shift ? CONFIG.runSpeed : CONFIG.walkSpeed) * speedMult;
 
   const moveVec = new THREE.Vector3(moveX, 0, moveZ);
@@ -187,30 +167,7 @@ function updatePlayer(dt) {
   velocity.x = moveVec.x * baseSpeed;
   velocity.z = moveVec.z * baseSpeed;
 
-  // slide: ao apertar Ctrl/C correndo, agacha e ganha um pulso de velocidade pra frente
-  if (keys.slide && onGround && slideTimer <= 0 && keys.shift && movingInput) {
-    slideTimer = CONFIG.slideDuration;
-    sfxSlide();
-  }
-  if (slideTimer > 0) {
-    slideTimer -= dt;
-    // durante o slide mantém a direção em que entrou
-    if (slideDir.lengthSq() < 0.001) slideDir.copy(moveVec.lengthSq()>0 ? moveVec : new THREE.Vector3(0,0,-1));
-    velocity.x = slideDir.x * CONFIG.runSpeed * 1.3;
-    velocity.z = slideDir.z * CONFIG.runSpeed * 1.3;
-  } else {
-    slideDir.set(0,0,0);
-  }
-
-  // vault automático: obstáculo baixo na frente + velocidade = salto automático por cima
-  const aheadDir = movingInput ? moveVec.clone() : new THREE.Vector3(Math.sin(player.rotation.y), 0, Math.cos(player.rotation.y));
-  const vaultTarget = checkVaultAhead(aheadDir);
-  if (vaultTarget && onGround && currentSpeed > 2.5 && !isSliding) {
-    verticalVel = CONFIG.vaultForce;
-    onGround = false;
-    triggerVaultPose();
-    sfxVault();
-  } else if (keys.space && onGround && !isSliding) {
+  if (keys.space && onGround) {
     verticalVel = CONFIG.jumpForce;
     onGround = false;
   }
@@ -241,34 +198,26 @@ function updatePlayer(dt) {
 
   // inclinação pra frente (forward lean) proporcional à velocidade — sensação de corrida agressiva
   const speedRatio = THREE.MathUtils.clamp(currentSpeed / (CONFIG.runSpeed*1.6), 0, 1);
-  const forwardLean = isSliding ? 0.95 : THREE.MathUtils.lerp(0.05, 0.32, speedRatio);
+  const forwardLean = THREE.MathUtils.lerp(0.05, 0.32, speedRatio);
   player.userData.torso.rotation.x = THREE.MathUtils.lerp(player.userData.torso.rotation.x, forwardLean, 0.2);
-
-  // agachamento visual durante o slide (abaixa torso e cabeça, sem mover a raiz do grupo)
-  const targetScaleY = isSliding ? 0.62 : 1.0;
-  playerGroup.scale.y = THREE.MathUtils.lerp(playerGroup.scale.y, targetScaleY, 0.35);
 
   // animação de corrida: pernas e braços alternados
   const moveSpeedReal = new THREE.Vector2(player.position.x-prevPos.x, player.position.z-prevPos.z).length()/dt;
   currentSpeed = moveSpeedReal;
-  const animRate = movingInput ? (isSliding ? 0 : (keys.shift ? 16 : 10)) : 0;
+  const animRate = movingInput ? (keys.shift ? 16 : 10) : 0;
   mixerTimeAcc += dt * animRate;
   const swing = Math.sin(mixerTimeAcc) * 0.55;
-  if (!isSliding && onGround) {
+  if (onGround) {
     player.userData.legL.rotation.x = movingInput ? swing : 0;
     player.userData.legR.rotation.x = movingInput ? -swing : 0;
     player.userData.armL.rotation.x = movingInput ? -swing*0.8 : 0;
     player.userData.armR.rotation.x = movingInput ? swing*0.8 : 0;
   } else if (!onGround) {
-    // pose de salto/vault: pernas dobradas pra frente
+    // pose de salto: pernas dobradas pra frente
     player.userData.legL.rotation.x = THREE.MathUtils.lerp(player.userData.legL.rotation.x, -0.9, 0.3);
     player.userData.legR.rotation.x = THREE.MathUtils.lerp(player.userData.legR.rotation.x, -0.5, 0.3);
     player.userData.armL.rotation.x = THREE.MathUtils.lerp(player.userData.armL.rotation.x, 0.6, 0.3);
     player.userData.armR.rotation.x = THREE.MathUtils.lerp(player.userData.armR.rotation.x, -0.6, 0.3);
-  } else {
-    // pose de slide: pernas estendidas
-    player.userData.legL.rotation.x = THREE.MathUtils.lerp(player.userData.legL.rotation.x, -1.3, 0.4);
-    player.userData.legR.rotation.x = THREE.MathUtils.lerp(player.userData.legR.rotation.x, -0.2, 0.4);
   }
   if (player.userData.ponytail) {
     player.userData.ponytail.rotation.x = 0.4 + Math.sin(mixerTimeAcc*0.5)*0.1 + speedRatio*0.3;
@@ -284,9 +233,8 @@ function updatePlayer(dt) {
 
 function updateCamera() {
   // câmera fixa atrás do personagem, auto-segue, sem mouse — mais baixa e próxima (estilo runner)
-  const isSliding = slideTimer > 0;
-  const heightOffset = isSliding ? 3.1 : 3.6;
-  const distOffset = isSliding ? 6.0 : 6.8;
+  const heightOffset = 3.6;
+  const distOffset = 6.8;
   const camOffset = new THREE.Vector3(0, heightOffset, distOffset);
 
   const desired = player.position.clone().add(camOffset);

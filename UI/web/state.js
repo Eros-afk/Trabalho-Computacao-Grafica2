@@ -20,9 +20,6 @@ const CONFIG = {
   baseFOV: 65,
   maxFOV: 82,
   jumpForce: 7.0,
-  vaultForce: 6.2,
-  slideDuration: 0.65,
-  vaultDetectRange: 1.6,
   gravity: -18,
   mapHalfSize: 70,          // mapa pequeno
   desarmeBonus: 15,         // tempo ganho ao usar posto de desarme
@@ -38,15 +35,13 @@ let onGround = true;
 let verticalVel = 0;
 
 let lastDt = 0.016;
-let slideTimer = 0;
-let slideDir = new THREE.Vector3();
 let bombTime = CONFIG.bombStart;
 let stopTimer = 0;
 let currentSpeed = 0;
 let gameRunning = false;
 let gameOver = false;
 
-const keys = { w:false, a:false, s:false, d:false, shift:false, space:false, slide:false };
+const keys = { w:false, a:false, s:false, d:false, shift:false, space:false };
 
 let obstacles = [];   // {mesh, box}
 let npcs = [];         // {mesh, type, speed, dir, box}
@@ -55,8 +50,7 @@ let powerupItems = []; // {mesh, type, pos}
 let extractionPoint = null;
 let extractionMesh = null;
 
-let activePowerups = { energetico: 0, escudo: 0, adrenalina: false };
+let activePowerups = { energetico: 0, escudo: 0 };
 let shieldCount = 0;
 
 let particles = [];
-

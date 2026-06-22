@@ -46,6 +46,12 @@ function setupCityProps() {
   const buildingPalette = [0xf2f3f1, 0xe9eaea, 0xdfe1e0, 0xd6cfc4, 0xc9cdd1];
   const windowMat = new THREE.MeshStandardMaterial({ color: 0x9fd6ff, emissive: 0x3a7ea8, emissiveIntensity: 0.4, roughness: 0.3 });
   const accentMat = new THREE.MeshStandardMaterial({ color: 0xff5a1f, roughness: 0.5 });
+  const parkMat = new THREE.MeshStandardMaterial({ color: 0x3f9b55, roughness: 0.9 });
+  const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4528, roughness: 0.8 });
+  const treeLeafMat = new THREE.MeshStandardMaterial({ color: 0x2f7d43, roughness: 0.9 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0x3b4148, metalness: 0.25, roughness: 0.55 });
+  const lightMat = new THREE.MeshStandardMaterial({ color: 0xfff1a8, emissive: 0xffd45a, emissiveIntensity: 0.65 });
+  const constructionMat = new THREE.MeshStandardMaterial({ color: 0xffb020, roughness: 0.6 });
 
   for (let i=-66; i<=66; i+=14) {
     [-26, 26].forEach((x, idx) => {
@@ -96,6 +102,62 @@ function setupCityProps() {
       }
     });
   }
+
+  // Trechos de cenário diferentes ao longo da rota: praça, obra, beco e área policial.
+  [-42, 18].forEach(z => {
+    const park = new THREE.Mesh(new THREE.BoxGeometry(10, 0.12, 14), parkMat);
+    park.position.set(-17.5, 0.08, z);
+    park.receiveShadow = true;
+    scene.add(park);
+
+    for (let i=0; i<4; i++) {
+      const tree = new THREE.Group();
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.4, 8), treeTrunkMat);
+      trunk.position.y = 0.75;
+      const leaves = new THREE.Mesh(new THREE.SphereGeometry(0.9, 10, 8), treeLeafMat);
+      leaves.position.y = 1.8;
+      tree.add(trunk, leaves);
+      tree.position.set(-20 + (i%2)*5, 0, z - 4 + Math.floor(i/2)*8);
+      scene.add(tree);
+    }
+  });
+
+  [-55, -25, 5, 35, 58].forEach(z => {
+    [-1, 1].forEach(side => {
+      const lamp = new THREE.Group();
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 3.4, 10), metalMat);
+      pole.position.y = 1.7;
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.08, 0.08), metalMat);
+      arm.position.set(side * -0.45, 3.25, 0);
+      const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 8), lightMat);
+      bulb.position.set(side * -0.95, 3.15, 0);
+      lamp.add(pole, arm, bulb);
+      lamp.position.set(side * 10.5, 0, z);
+      scene.add(lamp);
+    });
+  });
+
+  for (let i=0; i<4; i++) {
+    const barrier = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.2, 5), constructionMat);
+    barrier.position.set(17.5, 0.65, -28 + i*4);
+    barrier.rotation.y = i % 2 === 0 ? 0.08 : -0.08;
+    barrier.castShadow = true;
+    scene.add(barrier);
+  }
+
+  const alleyMat = new THREE.MeshStandardMaterial({ color: 0x252a30, roughness: 0.9 });
+  [-8, -2, 4].forEach(z => {
+    const alley = new THREE.Mesh(new THREE.BoxGeometry(1.2, 4.5, 5), alleyMat);
+    alley.position.set(22, 2.25, z);
+    alley.castShadow = true;
+    scene.add(alley);
+  });
+
+  const policeMat = new THREE.MeshStandardMaterial({ color: 0x1d4fa3, emissive: 0x0b2f7a, emissiveIntensity: 0.25 });
+  const policeLine = new THREE.Mesh(new THREE.BoxGeometry(7, 0.15, 0.35), policeMat);
+  policeLine.position.set(7.5, 1.2, -60);
+  policeLine.castShadow = true;
+  scene.add(policeLine);
 }
 
 
@@ -187,4 +249,3 @@ function updateDistanceHUD() {
   const d = Math.max(0, Math.round(player.position.distanceTo(extractionPoint)));
   document.getElementById('distValue').textContent = d;
 }
-

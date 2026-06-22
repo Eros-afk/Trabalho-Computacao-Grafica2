@@ -40,7 +40,7 @@ function resetGame() {
   stopTimer = 0;
   currentSpeed = 0;
   shieldCount = 0;
-  activePowerups = { energetico: 0, escudo: 0, adrenalina: false };
+  activePowerups = { energetico: 0, escudo: 0 };
   verticalVel = 0;
   onGround = true;
   gameOver = false;
