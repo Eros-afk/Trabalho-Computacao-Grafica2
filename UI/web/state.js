@@ -13,7 +13,7 @@
 // ---------- CONFIG GERAL ----------
 const CONFIG = {
   bombStart: 20,           // bomba começa com 20 segundos
-  stopLimit: 4,             // explode se < limite de velocidade por mais de 4s
+  stopLimit: 2,             // explode se < limite de velocidade por mais de 4s
   speedThreshold: 3.2,      // limite de velocidade (unid/s) abaixo do qual o timer de parada conta
   maxObstacleHits: 2,       // dois impactos em obstáculos detonam a bomba
   walkSpeed: 4.0,
