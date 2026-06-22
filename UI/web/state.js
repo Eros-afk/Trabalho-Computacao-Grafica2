@@ -1,0 +1,62 @@
+/* =========================================================
+   RUNBOOM — Three.js
+   Estrutura baseada em Projeto_Player_Movimento.txt:
+   - Player: Movimento, Câmera 3ª pessoa, Animações simples
+   - Bomb: Timer (60s), Explosão, Condições de derrota (parado >4s)
+   - NPC: IA simples, Colisões (pedestres, assaltantes, policiais)
+   - Obstacles: Carros, Caixas, Buracos, Barricadas
+   - UI: Cronômetro, Mensagens, Menu
+   - Effects: Sons básicos, Partículas
+   - Maps: cidade pequena com posto de desarme e ponto de extração
+========================================================= */
+
+// ---------- CONFIG GERAL ----------
+const CONFIG = {
+  bombStart: 60,           // bomba começa com 60 segundos
+  stopLimit: 4,             // explode se < limite de velocidade por mais de 4s
+  speedThreshold: 3.2,      // limite de velocidade (unid/s) abaixo do qual o timer de parada conta
+  walkSpeed: 4.0,
+  runSpeed: 8.5,
+  baseFOV: 65,
+  maxFOV: 82,
+  jumpForce: 7.0,
+  vaultForce: 6.2,
+  slideDuration: 0.65,
+  vaultDetectRange: 1.6,
+  gravity: -18,
+  mapHalfSize: 70,          // mapa pequeno
+  desarmeBonus: 15,         // tempo ganho ao usar posto de desarme
+  desarmeCooldown: 10,      // segundos antes de poder reusar o mesmo posto
+};
+
+// ---------- ESTADO ----------
+let scene, camera, renderer, clock;
+let player, playerGroup;
+let mixerTimeAcc = 0;
+let velocity = new THREE.Vector3();
+let onGround = true;
+let verticalVel = 0;
+
+let lastDt = 0.016;
+let slideTimer = 0;
+let slideDir = new THREE.Vector3();
+let bombTime = CONFIG.bombStart;
+let stopTimer = 0;
+let currentSpeed = 0;
+let gameRunning = false;
+let gameOver = false;
+
+const keys = { w:false, a:false, s:false, d:false, shift:false, space:false, slide:false };
+
+let obstacles = [];   // {mesh, box}
+let npcs = [];         // {mesh, type, speed, dir, box}
+let desarmePosts = [];  // {mesh, pos, cooldownUntil}
+let powerupItems = []; // {mesh, type, pos}
+let extractionPoint = null;
+let extractionMesh = null;
+
+let activePowerups = { energetico: 0, escudo: 0, adrenalina: false };
+let shieldCount = 0;
+
+let particles = [];
+
