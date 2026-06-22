@@ -210,6 +210,19 @@
     color: #ddd;
   }
 
+  #scoreHud {
+    position: absolute; top: 130px; right: 16px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #ddd;
+    text-align: right;
+  }
+  #scoreHud b { color: #ffd84a; font-family: 'Courier New', monospace; }
+
   #speedOverlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: 5;

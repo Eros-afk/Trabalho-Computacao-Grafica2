@@ -50,10 +50,13 @@ let obstacles = [];   // {mesh, box}
 let npcs = [];         // {mesh, type, speed, dir, box}
 let desarmePosts = [];  // {mesh, pos, cooldownUntil}
 let powerupItems = []; // {mesh, type, pos}
+let coinItems = [];    // {mesh, collected, baseY}
 let extractionPoint = null;
 let extractionMesh = null;
 
 let activePowerups = { energetico: 0, escudo: 0 };
 let shieldCount = 0;
+let coinsCollected = 0;
+let score = 0;
 
 let particles = [];

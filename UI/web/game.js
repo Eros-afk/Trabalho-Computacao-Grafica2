@@ -14,11 +14,13 @@ function animate() {
   updatePlayer(dt);
   updateNPCs(dt);
   updatePowerupsRotation(dt);
+  updateCoins(dt);
   updateBombLogic(dt);
   updateCamera();
   updatePowerupHUD(dt);
   checkCollisions();
   checkPickups();
+  checkCoins();
   checkDesarmePosts();
   checkExtraction();
   updateDistanceHUD();
@@ -33,8 +35,9 @@ function resetGame() {
   npcs.forEach(n => scene.remove(n.mesh));
   desarmePosts.forEach(p => scene.remove(p.mesh));
   powerupItems.forEach(p => { if (!p.collected) scene.remove(p.mesh); });
+  coinItems.forEach(c => { if (!c.collected) scene.remove(c.mesh); });
   particles.forEach(p => scene.remove(p.mesh));
-  obstacles = []; npcs = []; desarmePosts = []; powerupItems = []; particles = [];
+  obstacles = []; npcs = []; desarmePosts = []; powerupItems = []; coinItems = []; particles = [];
 
   bombTime = CONFIG.bombStart;
   stopTimer = 0;
@@ -42,6 +45,8 @@ function resetGame() {
   obstacleHitCooldown = 0;
   currentSpeed = 0;
   shieldCount = 0;
+  coinsCollected = 0;
+  score = 0;
   activePowerups = { energetico: 0, escudo: 0 };
   verticalVel = 0;
   onGround = true;
@@ -55,6 +60,7 @@ function resetGame() {
   setupNPCs();
   setupDesarmePosts();
   setupPowerups();
+  setupCoins();
 
   document.getElementById('overlay').classList.remove('show');
   gameRunning = true;

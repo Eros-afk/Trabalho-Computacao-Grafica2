@@ -24,6 +24,7 @@ function init() {
   setupNPCs();
   setupDesarmePosts();
   setupPowerups();
+  setupCoins();
   setupExtraction();
   setupCityProps();
 
@@ -94,4 +95,3 @@ function setupSky() {
   const sky = new THREE.Mesh(skyGeo, skyMat);
   scene.add(sky);
 }
-

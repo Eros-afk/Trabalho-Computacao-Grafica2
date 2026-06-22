@@ -45,7 +45,7 @@ function createNPC(type, x, z) {
     baseX: x,
     z,
     dir,
-    speed: type === 'assaltante' ? 2.8 : (type === 'policial' ? 1.7 : 3.0),
+    speed: type === 'assaltante' ? 3.8 : (type === 'policial' ? 2.6 : 3.0),
     box: new THREE.Box3().setFromObject(g),
     chaseRange: type === 'assaltante' ? 6 : 0,
   });
@@ -64,11 +64,11 @@ function updateNPCs(dt) {
         m.position.addScaledVector(dir, npc.speed*dt);
         m.rotation.y = Math.atan2(dir.x, dir.z);
       } else {
-        m.position.x = npc.baseX + Math.sin(performance.now()*0.001 + npc.z)*4;
+        m.position.x = npc.baseX + Math.sin(performance.now()*0.0014 + npc.z)*5;
       }
     } else if (npc.type === 'policial') {
-      m.position.x = npc.baseX + Math.sin(performance.now()*0.0007 + npc.z)*5;
-      m.rotation.y = Math.PI/2 * Math.sign(Math.cos(performance.now()*0.0007 + npc.z));
+      m.position.x = npc.baseX + Math.sin(performance.now()*0.0011 + npc.z)*6;
+      m.rotation.y = Math.PI/2 * Math.sign(Math.cos(performance.now()*0.0011 + npc.z));
     } else {
       // pedestre atravessando a rua
       m.position.x += npc.dir * npc.speed * dt;
