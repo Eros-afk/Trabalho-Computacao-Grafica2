@@ -2,7 +2,7 @@
    RUNBOOM — Three.js
    Estrutura baseada em Projeto_Player_Movimento.txt:
    - Player: Movimento, Câmera 3ª pessoa, Animações simples
-   - Bomb: Timer (60s), Explosão, Condições de derrota (parado >4s)
+   - Bomb: Timer (20s), Explosão, Condições de derrota (parado >4s)
    - NPC: IA simples, Colisões (pedestres, assaltantes, policiais)
    - Obstacles: Carros, Caixas, Buracos, Barricadas
    - UI: Cronômetro, Mensagens, Menu
@@ -12,9 +12,10 @@
 
 // ---------- CONFIG GERAL ----------
 const CONFIG = {
-  bombStart: 60,           // bomba começa com 60 segundos
+  bombStart: 20,           // bomba começa com 20 segundos
   stopLimit: 4,             // explode se < limite de velocidade por mais de 4s
   speedThreshold: 3.2,      // limite de velocidade (unid/s) abaixo do qual o timer de parada conta
+  maxObstacleHits: 2,       // dois impactos em obstáculos detonam a bomba
   walkSpeed: 4.0,
   runSpeed: 8.5,
   baseFOV: 65,
@@ -37,6 +38,8 @@ let verticalVel = 0;
 let lastDt = 0.016;
 let bombTime = CONFIG.bombStart;
 let stopTimer = 0;
+let obstacleHits = 0;
+let obstacleHitCooldown = 0;
 let currentSpeed = 0;
 let gameRunning = false;
 let gameOver = false;

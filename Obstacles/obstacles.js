@@ -124,6 +124,7 @@ function checkCollisions() {
     if (isLowObstacle && !onGround && player.position.y > 0.9) return;
     o.box.setFromObject(o.mesh);
     if (playerBox.intersectsBox(o.box)) {
+      registerObstacleHit();
       const pushDir = new THREE.Vector3().subVectors(player.position, o.mesh.position);
       pushDir.y = 0;
       if (pushDir.lengthSq() < 0.0001) pushDir.set(0,0,1);

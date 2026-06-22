@@ -1,6 +1,7 @@
 // ---------- LÓGICA DA BOMBA ----------
 function updateBombLogic(dt) {
   bombTime -= dt;
+  obstacleHitCooldown = Math.max(0, obstacleHitCooldown - dt);
 
   let effectiveThreshold = CONFIG.speedThreshold;
   if (activePowerups.energetico > 0) effectiveThreshold *= 0.7; // correndo rápido, mais fácil ficar acima do limite
@@ -25,6 +26,14 @@ function updateBombLogic(dt) {
   stopVal.textContent = stopTimer.toFixed(1)+'s';
   stopBox.classList.toggle('active', stopTimer > 0.3);
 
+  // UI: risco por impactos em obstáculos
+  const impactBox = document.getElementById('impactBox');
+  const impactVal = document.getElementById('impactValue');
+  impactVal.textContent = `${obstacleHits}/${CONFIG.maxObstacleHits}`;
+  impactBox.classList.remove('warning','danger');
+  if (obstacleHits >= CONFIG.maxObstacleHits) impactBox.classList.add('danger');
+  else if (obstacleHits > 0) impactBox.classList.add('warning');
+
   // UI: barra de velocidade
   const maxSpeedRef = CONFIG.runSpeed * 1.6;
   const pct = THREE.MathUtils.clamp((currentSpeed/maxSpeedRef)*100, 0, 100);
@@ -44,3 +53,13 @@ function updateBombLogic(dt) {
   }
 }
 
+function registerObstacleHit() {
+  if (gameOver || obstacleHitCooldown > 0) return;
+  obstacleHits++;
+  obstacleHitCooldown = 0.8;
+  sfxHit();
+
+  if (obstacleHits >= CONFIG.maxObstacleHits) {
+    triggerExplosion('A bomba explodiu após dois impactos em obstáculos.');
+  }
+}

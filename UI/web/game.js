@@ -38,6 +38,8 @@ function resetGame() {
 
   bombTime = CONFIG.bombStart;
   stopTimer = 0;
+  obstacleHits = 0;
+  obstacleHitCooldown = 0;
   currentSpeed = 0;
   shieldCount = 0;
   activePowerups = { energetico: 0, escudo: 0 };

@@ -45,6 +45,27 @@
   #stopLabel { font-size: 11px; letter-spacing: 1px; color: #ccc; text-transform: uppercase; }
   #stopValue { font-size: 28px; font-weight: 800; font-family: 'Courier New', monospace; }
 
+  #impactBox {
+    background: rgba(0,0,0,0.55);
+    border: 2px solid #555;
+    border-radius: 10px;
+    padding: 10px 18px;
+    text-align: center;
+    min-width: 140px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  #impactBox.warning {
+    border-color: #ffae00;
+    background: rgba(255,174,0,0.18);
+  }
+  #impactBox.danger {
+    border-color: #ff0000;
+    background: rgba(255,0,0,0.35);
+    animation: pulseDanger 0.3s infinite;
+  }
+  #impactLabel { font-size: 11px; letter-spacing: 1px; color: #ccc; text-transform: uppercase; }
+  #impactValue { font-size: 28px; font-weight: 800; font-family: 'Courier New', monospace; }
+
   #speedBarWrap {
     position: absolute; bottom: 130px; left: 50%; transform: translateX(-50%);
     width: 320px;
