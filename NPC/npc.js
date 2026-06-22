@@ -1,9 +1,9 @@
 // ---------- NPCs: Pedestres, Assaltantes, Policiais ----------
 function setupNPCs() {
-  const zStart = 40, zEnd = -40;
-  for (let z = zStart; z > zEnd; z -= 9) {
-    if (Math.random() < 0.6) {
-      const types = ['pedestre','assaltante','policial'];
+  const zStart = 44, zEnd = -48;
+  for (let z = zStart; z > zEnd; z -= 5) {
+    if (Math.random() < 0.85) {
+      const types = ['pedestre','pedestre','pedestre','assaltante','policial'];
       const type = types[Math.floor(Math.random()*types.length)];
       createNPC(type, (Math.random()*20-10), z);
     }
@@ -45,7 +45,7 @@ function createNPC(type, x, z) {
     baseX: x,
     z,
     dir,
-    speed: type === 'assaltante' ? 2.0 : (type === 'policial' ? 1.0 : 1.5),
+    speed: type === 'assaltante' ? 2.8 : (type === 'policial' ? 1.7 : 3.0),
     box: new THREE.Box3().setFromObject(g),
     chaseRange: type === 'assaltante' ? 6 : 0,
   });
@@ -64,11 +64,11 @@ function updateNPCs(dt) {
         m.position.addScaledVector(dir, npc.speed*dt);
         m.rotation.y = Math.atan2(dir.x, dir.z);
       } else {
-        m.position.x = npc.baseX + Math.sin(performance.now()*0.0006 + npc.z)*3;
+        m.position.x = npc.baseX + Math.sin(performance.now()*0.001 + npc.z)*4;
       }
     } else if (npc.type === 'policial') {
-      m.position.x = npc.baseX + Math.sin(performance.now()*0.0004 + npc.z)*4;
-      m.rotation.y = Math.PI/2 * Math.sign(Math.cos(performance.now()*0.0004 + npc.z));
+      m.position.x = npc.baseX + Math.sin(performance.now()*0.0007 + npc.z)*5;
+      m.rotation.y = Math.PI/2 * Math.sign(Math.cos(performance.now()*0.0007 + npc.z));
     } else {
       // pedestre atravessando a rua
       m.position.x += npc.dir * npc.speed * dt;

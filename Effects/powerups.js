@@ -47,7 +47,7 @@ function checkPickups() {
 
 function applyPowerup(type) {
   if (type === 'energetico') {
-    activePowerups.energetico = 8; // 8s de boost de velocidade
+    activePowerups.energetico = 3; // 3s de boost de velocidade
   } else if (type === 'escudo') {
     shieldCount += 1;
   }

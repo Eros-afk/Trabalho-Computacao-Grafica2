@@ -23,7 +23,7 @@ const CONFIG = {
   jumpForce: 7.0,
   gravity: -18,
   mapHalfSize: 70,          // mapa pequeno
-  desarmeBonus: 15,         // tempo ganho ao usar posto de desarme
+  desarmeBonus: 8,          // tempo ganho ao usar posto de desarme
   desarmeCooldown: 10,      // segundos antes de poder reusar o mesmo posto
 };
 
