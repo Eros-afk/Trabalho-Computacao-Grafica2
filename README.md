@@ -21,6 +21,9 @@ O objetivo central é chegar ao local de desarme e aumentar a pontuação coleta
 
 ---
 
+## Link para jogar
+https://eros-afk.github.io/Trabalho-Computacao-Grafica2/
+
 ## História
 
 Um criminoso amarrou uma bomba ao corpo do personagem. A bomba possui um sensor de velocidade que monitora constantemente os movimentos do jogador. Se a velocidade ficar abaixo do limite durante 2 segundos, a bomba explode. O jogador deve manter-se sempre em movimento, correndo rapidamente até chegar ao local de desarme para salvar sua vida!
