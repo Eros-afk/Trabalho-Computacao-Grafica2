@@ -7,6 +7,12 @@
 
 ---
 
+## Imagens
+
+<img src="./images/Captura de tela de 2026-06-26 16-57-30.png">
+<img src="./images/Captura de tela de 2026-06-26 16-58-03.png">
+<img src="./images/Captura de tela de 2026-06-26 16-58-33.png">
+
 ## Sobre o Projeto
 
 Este projeto foi desenvolvido para o Trabalho Prático 2 da disciplina de Computação Gráfica. É um jogo onde você deve correr para a bomba não explodir
