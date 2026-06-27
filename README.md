@@ -62,7 +62,7 @@ Um criminoso amarrou uma bomba ao corpo do personagem. A bomba possui um sensor 
 ```text
 .
 ├── README.md               # Documentação do projeto
-├── RunBoom.html            # Arquivo principal para abrir no navegador
+├── index.html              # Arquivo principal para abrir no navegador
 ├── Bomb/
 │   └── bomb.js             # Lógica e comportamento da bomba
 ├── Effects/
@@ -80,7 +80,6 @@ Um criminoso amarrou uma bomba ao corpo do personagem. A bomba possui um sensor 
     └── web/
         ├── game.js         # Lógica principal do jogo
         ├── hud.js          # Interface do usuário (HUD)
-        ├── index.html      # Estrutura HTML da aplicação
         ├── scene.js        # Cena e renderização Three.js
         ├── state.js        # Gerenciamento de estado do jogo
         └── styles.css      # Estilos CSS
